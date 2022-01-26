@@ -1190,4 +1190,132 @@ _VIDEOBUFFER = _descriptor.Descriptor(
       name='start_time', full_name='chrys.cloud.videostreaming.v1beta1.VideoBuffer.start_time', index=0,
       number=1, type=3, cpp_type=2, label=1,
       has_default_value=False, default_value=0,
-      message_type=None, enum_type=None, containing
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='end_time', full_name='chrys.cloud.videostreaming.v1beta1.VideoBuffer.end_time', index=1,
+      number=2, type=3, cpp_type=2, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='duration_seconds', full_name='chrys.cloud.videostreaming.v1beta1.VideoBuffer.duration_seconds', index=2,
+      number=3, type=3, cpp_type=2, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='approximate_fps', full_name='chrys.cloud.videostreaming.v1beta1.VideoBuffer.approximate_fps', index=3,
+      number=4, type=5, cpp_type=1, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='frames', full_name='chrys.cloud.videostreaming.v1beta1.VideoBuffer.frames', index=4,
+      number=5, type=3, cpp_type=2, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=2606,
+  serialized_end=2724,
+)
+
+
+_SYSTEMTIMERESPONSE = _descriptor.Descriptor(
+  name='SystemTimeResponse',
+  full_name='chrys.cloud.videostreaming.v1beta1.SystemTimeResponse',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  create_key=_descriptor._internal_create_key,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='current_time', full_name='chrys.cloud.videostreaming.v1beta1.SystemTimeResponse.current_time', index=0,
+      number=1, type=3, cpp_type=2, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=2726,
+  serialized_end=2768,
+)
+
+
+_SYSTEMTIMEREQUEST = _descriptor.Descriptor(
+  name='SystemTimeRequest',
+  full_name='chrys.cloud.videostreaming.v1beta1.SystemTimeRequest',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  create_key=_descriptor._internal_create_key,
+  fields=[
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=2770,
+  serialized_end=2789,
+)
+
+_ANNOTATEREQUEST.fields_by_name['object_bouding_box'].message_type = _BOUDINGBOX
+_ANNOTATEREQUEST.fields_by_name['location'].message_type = _LOCATION
+_ANNOTATEREQUEST.fields_by_name['object_coordinate'].message_type = _COORDINATE
+_ANNOTATEREQUEST.fields_by_name['mask'].message_type = _COORDINATE
+_SHAPEPROTO_DIM.containing_type = _SHAPEPROTO
+_SHAPEPROTO.fields_by_name['dim'].message_type = _SHAPEPROTO_DIM
+_VIDEOFRAME.fields_by_name['shape'].message_type = _SHAPEPROTO
+_VIDEOPROBERESPONSE.fields_by_name['video_codec'].message_type = _VIDEOCODEC
+_VIDEOPROBERESPONSE.fields_by_name['buffer'].message_type = _VIDEOBUFFER
+DESCRIPTOR.message_types_by_name['AnnotateRequest'] = _ANNOTATEREQUEST
+DESCRIPTOR.message_types_by_name['AnnotateResponse'] = _ANNOTATERESPONSE
+DESCRIPTOR.message_types_by_name['Location'] = _LOCATION
+DESCRIPTOR.message_types_by_name['Coordinate'] = _COORDINATE
+DESCRIPTOR.message_types_by_name['BoudingBox'] = _BOUDINGBOX
+DESCRIPTOR.message_types_by_name['ShapeProto'] = _SHAPEPROTO
+DESCRIPTOR.message_types_by_name['VideoFrame'] = _VIDEOFRAME
+DESCRIPTOR.message_types_by_name['VideoFrameRequest'] = _VIDEOFRAMEREQUEST
+DESCRIPTOR.message_types_by_name['VideoFrameBufferedRequest'] = _VIDEOFRAMEBUFFEREDREQUEST
+DESCRIPTOR.message_types_by_name['ListStream'] = _LISTSTREAM
+DESCRIPTOR.message_types_by_name['ListStreamRequest'] = _LISTSTREAMREQUEST
+DESCRIPTOR.message_types_by_name['ProxyRequest'] = _PROXYREQUEST
+DESCRIPTOR.message_types_by_name['ProxyResponse'] = _PROXYRESPONSE
+DESCRIPTOR.message_types_by_name['StorageRequest'] = _STORAGEREQUEST
+DESCRIPTOR.message_types_by_name['StorageResponse'] = _STORAGERESPONSE
+DESCRIPTOR.message_types_by_name['VideoCodec'] =
