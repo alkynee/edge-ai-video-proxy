@@ -1318,4 +1318,123 @@ DESCRIPTOR.message_types_by_name['ProxyRequest'] = _PROXYREQUEST
 DESCRIPTOR.message_types_by_name['ProxyResponse'] = _PROXYRESPONSE
 DESCRIPTOR.message_types_by_name['StorageRequest'] = _STORAGEREQUEST
 DESCRIPTOR.message_types_by_name['StorageResponse'] = _STORAGERESPONSE
-DESCRIPTOR.message_types_by_name['VideoCodec'] =
+DESCRIPTOR.message_types_by_name['VideoCodec'] = _VIDEOCODEC
+DESCRIPTOR.message_types_by_name['VideoProbeRequest'] = _VIDEOPROBEREQUEST
+DESCRIPTOR.message_types_by_name['VideoProbeResponse'] = _VIDEOPROBERESPONSE
+DESCRIPTOR.message_types_by_name['VideoBuffer'] = _VIDEOBUFFER
+DESCRIPTOR.message_types_by_name['SystemTimeResponse'] = _SYSTEMTIMERESPONSE
+DESCRIPTOR.message_types_by_name['SystemTimeRequest'] = _SYSTEMTIMEREQUEST
+_sym_db.RegisterFileDescriptor(DESCRIPTOR)
+
+AnnotateRequest = _reflection.GeneratedProtocolMessageType('AnnotateRequest', (_message.Message,), {
+  'DESCRIPTOR' : _ANNOTATEREQUEST,
+  '__module__' : 'video_streaming_pb2'
+  # @@protoc_insertion_point(class_scope:chrys.cloud.videostreaming.v1beta1.AnnotateRequest)
+  })
+_sym_db.RegisterMessage(AnnotateRequest)
+
+AnnotateResponse = _reflection.GeneratedProtocolMessageType('AnnotateResponse', (_message.Message,), {
+  'DESCRIPTOR' : _ANNOTATERESPONSE,
+  '__module__' : 'video_streaming_pb2'
+  # @@protoc_insertion_point(class_scope:chrys.cloud.videostreaming.v1beta1.AnnotateResponse)
+  })
+_sym_db.RegisterMessage(AnnotateResponse)
+
+Location = _reflection.GeneratedProtocolMessageType('Location', (_message.Message,), {
+  'DESCRIPTOR' : _LOCATION,
+  '__module__' : 'video_streaming_pb2'
+  # @@protoc_insertion_point(class_scope:chrys.cloud.videostreaming.v1beta1.Location)
+  })
+_sym_db.RegisterMessage(Location)
+
+Coordinate = _reflection.GeneratedProtocolMessageType('Coordinate', (_message.Message,), {
+  'DESCRIPTOR' : _COORDINATE,
+  '__module__' : 'video_streaming_pb2'
+  # @@protoc_insertion_point(class_scope:chrys.cloud.videostreaming.v1beta1.Coordinate)
+  })
+_sym_db.RegisterMessage(Coordinate)
+
+BoudingBox = _reflection.GeneratedProtocolMessageType('BoudingBox', (_message.Message,), {
+  'DESCRIPTOR' : _BOUDINGBOX,
+  '__module__' : 'video_streaming_pb2'
+  # @@protoc_insertion_point(class_scope:chrys.cloud.videostreaming.v1beta1.BoudingBox)
+  })
+_sym_db.RegisterMessage(BoudingBox)
+
+ShapeProto = _reflection.GeneratedProtocolMessageType('ShapeProto', (_message.Message,), {
+
+  'Dim' : _reflection.GeneratedProtocolMessageType('Dim', (_message.Message,), {
+    'DESCRIPTOR' : _SHAPEPROTO_DIM,
+    '__module__' : 'video_streaming_pb2'
+    # @@protoc_insertion_point(class_scope:chrys.cloud.videostreaming.v1beta1.ShapeProto.Dim)
+    })
+  ,
+  'DESCRIPTOR' : _SHAPEPROTO,
+  '__module__' : 'video_streaming_pb2'
+  # @@protoc_insertion_point(class_scope:chrys.cloud.videostreaming.v1beta1.ShapeProto)
+  })
+_sym_db.RegisterMessage(ShapeProto)
+_sym_db.RegisterMessage(ShapeProto.Dim)
+
+VideoFrame = _reflection.GeneratedProtocolMessageType('VideoFrame', (_message.Message,), {
+  'DESCRIPTOR' : _VIDEOFRAME,
+  '__module__' : 'video_streaming_pb2'
+  # @@protoc_insertion_point(class_scope:chrys.cloud.videostreaming.v1beta1.VideoFrame)
+  })
+_sym_db.RegisterMessage(VideoFrame)
+
+VideoFrameRequest = _reflection.GeneratedProtocolMessageType('VideoFrameRequest', (_message.Message,), {
+  'DESCRIPTOR' : _VIDEOFRAMEREQUEST,
+  '__module__' : 'video_streaming_pb2'
+  # @@protoc_insertion_point(class_scope:chrys.cloud.videostreaming.v1beta1.VideoFrameRequest)
+  })
+_sym_db.RegisterMessage(VideoFrameRequest)
+
+VideoFrameBufferedRequest = _reflection.GeneratedProtocolMessageType('VideoFrameBufferedRequest', (_message.Message,), {
+  'DESCRIPTOR' : _VIDEOFRAMEBUFFEREDREQUEST,
+  '__module__' : 'video_streaming_pb2'
+  # @@protoc_insertion_point(class_scope:chrys.cloud.videostreaming.v1beta1.VideoFrameBufferedRequest)
+  })
+_sym_db.RegisterMessage(VideoFrameBufferedRequest)
+
+ListStream = _reflection.GeneratedProtocolMessageType('ListStream', (_message.Message,), {
+  'DESCRIPTOR' : _LISTSTREAM,
+  '__module__' : 'video_streaming_pb2'
+  # @@protoc_insertion_point(class_scope:chrys.cloud.videostreaming.v1beta1.ListStream)
+  })
+_sym_db.RegisterMessage(ListStream)
+
+ListStreamRequest = _reflection.GeneratedProtocolMessageType('ListStreamRequest', (_message.Message,), {
+  'DESCRIPTOR' : _LISTSTREAMREQUEST,
+  '__module__' : 'video_streaming_pb2'
+  # @@protoc_insertion_point(class_scope:chrys.cloud.videostreaming.v1beta1.ListStreamRequest)
+  })
+_sym_db.RegisterMessage(ListStreamRequest)
+
+ProxyRequest = _reflection.GeneratedProtocolMessageType('ProxyRequest', (_message.Message,), {
+  'DESCRIPTOR' : _PROXYREQUEST,
+  '__module__' : 'video_streaming_pb2'
+  # @@protoc_insertion_point(class_scope:chrys.cloud.videostreaming.v1beta1.ProxyRequest)
+  })
+_sym_db.RegisterMessage(ProxyRequest)
+
+ProxyResponse = _reflection.GeneratedProtocolMessageType('ProxyResponse', (_message.Message,), {
+  'DESCRIPTOR' : _PROXYRESPONSE,
+  '__module__' : 'video_streaming_pb2'
+  # @@protoc_insertion_point(class_scope:chrys.cloud.videostreaming.v1beta1.ProxyResponse)
+  })
+_sym_db.RegisterMessage(ProxyResponse)
+
+StorageRequest = _reflection.GeneratedProtocolMessageType('StorageRequest', (_message.Message,), {
+  'DESCRIPTOR' : _STORAGEREQUEST,
+  '__module__' : 'video_streaming_pb2'
+  # @@protoc_insertion_point(class_scope:chrys.cloud.videostreaming.v1beta1.StorageRequest)
+  })
+_sym_db.RegisterMessage(StorageRequest)
+
+StorageResponse = _reflection.GeneratedProtocolMessageType('StorageResponse', (_message.Message,), {
+  'DESCRIPTOR' : _STORAGERESPONSE,
+  '__module__' : 'video_streaming_pb2'
+  # @@protoc_insertion_point(class_scope:chrys.cloud.videostreaming.v1beta1.StorageResponse)
+  })
+_sym_db.RegisterMessage(StorageRespons
