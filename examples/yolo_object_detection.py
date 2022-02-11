@@ -169,3 +169,19 @@ if __name__ == "__main__":
         if len(frame.shape.dim) > 0:
             reshape = tuple([int(dim.size) for dim in frame.shape.dim])
             re_img = np.reshape(re_img, reshape)
+
+            height, width = re_img.shape[:2]
+
+            re_img, boxes, confidences, classids, idxs = infer_image(net, layer_names, \
+                                height, width, re_img, colors, labels, boxes, confidences, classids, idxs, infer=True)
+
+            # add camera name
+            cv.namedWindow('box', cv.WINDOW_NORMAL)
+            cv.resizeWindow('box', 1024,768)
+            cv.setWindowTitle('box', args.device) 
+            cv.imshow('box', re_img)
+            
+            if cv.waitKey(1) & 0xFF == ord('q'):
+                break
+
+cv2.destroyWindow('box')
