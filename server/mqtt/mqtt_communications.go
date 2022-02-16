@@ -160,4 +160,163 @@ func (mqtt *mqttManager) run() error {
 				err := json.Unmarshal(payload, &localMsg)
 				if err != nil {
 					g.Log.Error("failed to unmarshal internal redis pubsub message", err)
-				} 
+				} else {
+					g.Log.Info("Received message object from redis pubsub for mqtt: ", localMsg.DeviceID)
+					var opErr error
+					if localMsg.ProcessType == models.MQTTProcessType(models.ProcessTypeRTSP) {
+						if localMsg.ProcessOperation == models.MQTTProcessOperation(models.DeviceOperationAdd) {
+
+							opErr = mqtt.bindDevice(localMsg.DeviceID, models.MQTTProcessType(models.ProcessTypeRTSP))
+
+						} else if localMsg.ProcessOperation == models.MQTTProcessOperation(models.DeviceOperationRemove) {
+
+							opErr = mqtt.unbindDevice(localMsg.DeviceID, models.MQTTProcessType(models.ProcessTypeRTSP))
+
+						} else if localMsg.ProcessOperation == models.MQTTProcessOperation(models.DeviceOperationUpgradeAvailable) {
+							// TODO: TBD
+							g.Log.Warn("TBD: process operation upgrade available")
+						} else if localMsg.ProcessOperation == models.MQTTProcessOperation(models.DeviceOperationUpgradeFinished) {
+							// TODO: TBD
+							g.Log.Warn("TBD: process operation upgrade completed/finished")
+						} else if localMsg.ProcessOperation == models.MQTTProcessOperation(models.DeviceOperationStart) {
+
+							opErr = mqtt.StartCamera(localMsg.Message)
+						} else if localMsg.ProcessOperation == models.MQTTProcessOperation(models.DeviceOperationDelete) {
+
+							opErr = mqtt.StopCamera(localMsg.Message)
+						} else if localMsg.ProcessOperation == models.MQTTProcessOperation(models.DeviceInternalTesting) {
+
+							// **********
+							// internal testing operations
+							// **********
+							testErr := mqtt.reportDeviceStateChange(localMsg.DeviceID, models.ProcessStatusRestarting)
+							if testErr != nil {
+								g.Log.Error("TEST FAILED ------------------> ", testErr)
+							}
+
+						} else {
+							opErr = errors.New("local message operation not recognized")
+							g.Log.Error("message operation not recognized: ", localMsg.ProcessOperation, localMsg.DeviceID, localMsg.ProcessType)
+						}
+					} else if localMsg.ProcessType == models.MQTTProcessType(models.ProcessTypeApplication) {
+						// INSTALL APPLICATION
+						if localMsg.ProcessOperation == models.MQTTProcessOperation(models.DeviceOperationAdd) {
+
+							payload, siErr := mqtt.PullApplication(localMsg.Message)
+							if siErr != nil {
+								opErr = siErr
+							} else {
+								opErr = mqtt.StartApplication(payload)
+							}
+
+						} else if localMsg.ProcessOperation == models.MQTTProcessOperation(models.DeviceOperationRemove) {
+							// DELETE APPLICATION
+							opErr = mqtt.StopApplication(localMsg.Message)
+
+						} else {
+							opErr = errors.New("local message application operation not recognized")
+							g.Log.Error("message application operation not recognized: ", localMsg.ProcessOperation, localMsg.DeviceID, localMsg.ProcessType)
+						}
+					}
+
+					if opErr != nil {
+						g.Log.Error("local pubsub gateway msg failed", opErr)
+					}
+				}
+			}
+		}
+	}(sub)
+
+	// reporting device changes
+	go func() {
+		cl, err := client.NewClient("unix:///var/run/docker.sock", "1.40", nil, nil)
+		if err != nil {
+			g.Log.Error("failed to initialize docker event listener")
+			return
+		}
+		filterArgs := filters.NewArgs()
+		filterArgs.Add("type", events.ContainerEventType)
+		opts := types.EventsOptions{
+			Filters: filterArgs,
+		}
+		// listening to events of docker
+		messages, errs := cl.Events(context.Background(), opts)
+
+		for {
+			select {
+			case err := <-errs:
+				if err != nil && err != io.EOF {
+					g.Log.Error(err)
+				}
+			case e := <-messages:
+				dsErr := mqtt.changedDeviceState(mqtt.gatewayID, e)
+				if dsErr != nil {
+					g.Log.Error("failed to update device state", e, dsErr)
+				}
+			}
+		}
+	}()
+
+	// report gateway state 60 seconds
+	delay := time.Second * 60
+	go func() {
+		for {
+			err := mqtt.gatewayState(mqtt.gatewayID)
+			if err != nil {
+				g.Log.Error("failed to report gateway state: ", err)
+			}
+			select {
+			case <-time.After(delay):
+			case <-mqtt.stop:
+				g.Log.Info("MQTT cron job stopped")
+				return
+			}
+		}
+	}()
+
+	// reporting very first container stats right after first 10 seconds (sort of a ground truth)
+	time.AfterFunc(time.Second*10, func() {
+		err := mqtt.ReportContainersStats()
+		if err != nil {
+			g.Log.Error("failed to retrieve all device stats", err)
+		}
+	})
+
+	// report system wide info every 5 minutes
+	sysDelay := time.Minute * 5
+	go func() {
+		for {
+			select {
+			case <-time.After(sysDelay):
+				err := mqtt.ReportContainersStats()
+				if err != nil {
+					g.Log.Error("failed to retrieve all device stats", err)
+				}
+			case <-mqtt.stop:
+				g.Log.Info("Syscron stopped")
+				return
+			}
+		}
+	}()
+	return nil
+}
+
+// Start the MQTT communication gateway
+func (mqtt *mqttManager) gatewayInit() error {
+
+	// check settings if they exist
+	settings, err := mqtt.settingsService.Get()
+	if err != nil {
+		if err == badger.ErrKeyNotFound {
+			return nil
+		}
+		g.Log.Error("failed to retrieve edge settings", err)
+		return err
+	}
+	if settings.ProjectID == "" || settings.Region == "" || settings.GatewayID == "" || settings.RegistryID == "" || settings.PrivateRSAKey == nil {
+		g.Log.Warn("ProjectID: ", settings.ProjectID, "Region: ", settings.Region, "GatewayID: ", settings.GatewayID, "RegistryID: ", settings.RegistryID)
+		return ErrNoMQTTSettings
+	}
+
+	// rotate it every day at least (JWT token must expire sooner)
+	jwt, 
