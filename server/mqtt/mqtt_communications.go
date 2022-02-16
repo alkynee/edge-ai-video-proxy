@@ -319,4 +319,124 @@ func (mqtt *mqttManager) gatewayInit() error {
 	}
 
 	// rotate it every day at least (JWT token must expire sooner)
-	jwt, 
+	jwt, ccErr := utils.CreateJWT(settings.ProjectID, settings.PrivateRSAKey, time.Hour*1)
+	if ccErr != nil {
+		g.Log.Error("Failed to create JWT key for communication with ChrysCloud MQTT", ccErr)
+		return ccErr
+	}
+	clientID := fmt.Sprintf("projects/%s/locations/%s/registries/%s/devices/%s", settings.ProjectID, settings.Region, settings.RegistryID, settings.GatewayID)
+	opts := qtt.NewClientOptions()
+	opts.AddBroker(mqttBrokerURL)
+	opts.SetClientID(clientID)
+	opts.SetUsername("unused")
+	opts.SetPassword(jwt)
+	opts.SetProtocolVersion(protocolVersion)
+	opts.SetOnConnectHandler(mqtt.onConnect)
+	opts.SetDefaultPublishHandler(mqtt.onMessage)
+	opts.SetConnectionLostHandler(mqtt.onConnectionLost)
+	opts.SetCleanSession(false)
+	opts.SetAutoReconnect(true)
+	opts.SetMaxReconnectInterval(time.Second * 15)
+
+	mqtt.gatewayID = settings.GatewayID
+	mqtt.projectID = settings.ProjectID
+	mqtt.jwt = jwt
+	mqtt.clientOpts = opts
+
+	cl, cErr := mqtt.connectClient(opts, settings, jwt)
+	if cErr != nil {
+		g.Log.Error("failed to connect client", cErr)
+		return cErr
+	}
+
+	mqtt.client = cl
+
+	mqtt.monitorTokenExpiration()
+
+	return nil
+}
+
+func (mqtt *mqttManager) connectClient(opts *qtt.ClientOptions, settings *models.Settings, jwt string) (*qtt.Client, error) {
+	// Create and connect a client using the above options.
+	client := qtt.NewClient(opts)
+	if token := client.Connect(); token.Wait() && token.Error() != nil {
+		g.Log.Error("failed to connect with mqtt ChrysCloud broker", token.Error())
+		return nil, token.Error()
+	}
+
+	mqtt.client = &client
+
+	for {
+		time.Sleep(time.Second * 5)
+
+		// register subscribers
+		err := mqtt.gatewaySubscribers()
+		if err == nil {
+			break
+		}
+		g.Log.Error("failed to initialize subscribers", err)
+	}
+	return &client, nil
+}
+
+func (mqtt *mqttManager) StopGateway() error {
+	g.Log.Info("mqtt disconnect")
+	if mqtt.client != nil {
+		(*mqtt.client).Disconnect(20)
+	}
+	mqtt.stop <- true
+	return nil
+}
+
+// monitoring the connection state every 15 seconds (also handles jwt expired tokens)
+func (mqtt *mqttManager) monitorTokenExpiration() error {
+
+	delay := time.Second * 15
+	go func() {
+		for {
+
+			expirationTime, err := utils.ParseJWTTokenExpirationTime(mqtt.jwt)
+			if err != nil {
+				g.Log.Error("failed ot parse jwt tokens expiration time: ", err)
+				return
+			}
+			today := time.Now().UTC().Unix() * 1000
+
+			diff := today - (expirationTime.Unix() * 1000)
+
+			if diff >= -(60 * 1000) {
+				g.Log.Info("Re-issuing JWT token and re-connecting MQTT client", diff)
+				sett, err := mqtt.settingsService.Get()
+				if err != nil {
+					g.Log.Error("failed to retrieve settings", sett)
+					return
+				}
+				cl := (*mqtt.client)
+
+				cl.Disconnect(300)
+
+				jwt, ccErr := utils.CreateJWT(sett.ProjectID, sett.PrivateRSAKey, time.Hour*1)
+				if ccErr != nil {
+					g.Log.Error("Failed to create JWT key for communication with ChrysCloud MQTT", ccErr)
+					return
+				}
+				mqtt.clientOpts.SetPassword(jwt)
+				mqtt.jwt = jwt
+				_, cErr := mqtt.connectClient(mqtt.clientOpts, sett, jwt)
+				if cErr != nil {
+					g.Log.Error("failed to reconnect client", cErr)
+					return
+				}
+			}
+
+			select {
+			case <-time.After(delay):
+			case <-mqtt.stop:
+				g.Log.Info("mqtt stopped")
+				return
+			}
+		}
+	}()
+
+	return nil
+}
