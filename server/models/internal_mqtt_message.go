@@ -30,4 +30,10 @@ type MQTTMessage struct {
 	DeviceID         string               `json:"deviceId"`                 // for which device the internal message is
 	Created          int64                `json:"created,omitempty"`        // time of creation of the message
 	ImageTag         string               `json:"imageTag,omitempty"`       // docker image tag
-	RTMPEndpoint     strin
+	RTMPEndpoint     string               `json:"rtmpEndpoint,omitempty"`   // possible rtmp endpoint
+	RTSPConnection   string               `json:"rtspConnection,omitempty"` // rtspConnection string
+	ProcessOperation MQTTProcessOperation `json:"operation"`                // the state of the internal process
+	ProcessType      MQTTProcessType      `json:"type,omitempty"`           // type of internal process
+	State            string               `json:"state,omitempty"`          // process state (running, restarting, ...)
+	Message          []byte               `json:"message,omitempty"`        // optional custom message
+}
