@@ -29,4 +29,11 @@ type SystemInfo struct {
 	RegistryID    string `json:"registryId"`              // registry id
 	NCPUs         int    `json:"ncpu"`                    // number of CPUs
 	Architecture  string `json:"architecture,omitempty"`  // e.g. x_86_64
-	TotalMemory   int64  `json:"totalMemory,omitempty"`
+	TotalMemory   int64  `json:"totalMemory,omitempty"`   // total memory
+	Name          string `json:"name,omitempty"`          // name of the computer
+	ID            string `json:"id,omitempty"`            // id of the computer
+	KernelVersion string `json:"kernelVersion,omitempty"` // kernel version
+	OSType        string `json:"osType,omitempty"`        // os type
+	OS            string `json:"os,omitempty"`            // operating system
+	DockerVersion string `json:"dockerVersion,omitempty"` // docker version
+}
