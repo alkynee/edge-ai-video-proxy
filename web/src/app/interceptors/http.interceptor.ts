@@ -36,4 +36,25 @@ export class ChrysHttpInterceptor implements HttpInterceptor {
                 return event;
             }),
             catchError((error: HttpErrorResponse) => {
-       
+                this.loaderService.hide();
+
+                let data = {};
+                data = {
+                    message: error && error.error && error.error.message ? error.error.message : '',
+                    status: error && error.error && error.error.code ? error.error.code : '0',
+                };
+                if (error.status == 401) {
+                    this.router.navigate(['/user/login']);
+                    return throwError(data);
+                }
+
+                if (error.status == 0) { // server unreachable
+                    
+                }
+                
+                return throwError(data);
+            })
+        );
+    }
+    
+}
