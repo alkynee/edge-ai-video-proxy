@@ -64,4 +64,14 @@ export class EdgeService {
   }
 
   removeApp(name:string) {
-    return this.http.delete(environment
+    return this.http.delete(environment.LocalServerURL + "/api/v1/appprocess/" + name);
+  }
+
+  listApps() {
+    return this.http.get<[AppProcess]>(environment.LocalServerURL + "/api/v1/appprocesslist");
+  }
+
+  getApp(name:string) {
+    return this.http.get<AppProcess>(environment.LocalServerURL + "/api/v1/appprocess/" + name);
+  }
+}
